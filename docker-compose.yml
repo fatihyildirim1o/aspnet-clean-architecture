@@ -1,0 +1,134 @@
+version: '3.4'
+services:
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:7.13.2
+    container_name: apm-server
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
+    cap_drop: ["ALL"]
+    ports:
+    - 8200:8200
+    networks:
+    - onion
+    command: >
+       apm-server -e
+         -E apm-server.rum.enabled=true
+         -E setup.kibana.host=kibana:5601
+         -E setup.template.settings.index.number_of_replicas=0
+         -E apm-server.kibana.enabled=true
+         -E apm-server.kibana.host=kibana:5601
+         -E output.elasticsearch.hosts=["elasticsearch:9200"]
+    healthcheck:
+      interval: 10s
+      retries: 12
+      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:8200/
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+    container_name: elasticsearch
+    environment:
+    - bootstrap.memory_lock=true
+    - cluster.name=docker-cluster
+    - cluster.routing.allocation.disk.threshold_enabled=false
+    - discovery.type=single-node
+    - ES_JAVA_OPTS=-XX:UseAVX=2 -Xms1g -Xmx1g
+    ulimits:
+      memlock:
+        hard: -1
+        soft: -1
+    volumes:
+    - elastic:/usr/share/elasticsearch/data
+    ports:
+    - 9200:9200
+    networks:
+    - onion
+    healthcheck:
+      interval: 20s
+      retries: 10
+      test: curl -s http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.13.2
+    container_name: kibana
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    ports:
+    - 5601:5601
+    networks:
+    - onion
+    healthcheck:
+      interval: 10s
+      retries: 20
+      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:5601/api/status
+
+  mssql:
+    container_name: mssql
+    restart: always
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    networks:
+    - onion
+    volumes:
+      - mssql:/usr/share/mssql/data
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    command: redis-server --appendonly yes
+    ports:
+    - 6379:6379
+    volumes:
+    - ./data:/data
+    restart: always
+    networks:
+    - onion
+
+  rabbitmq:
+    image: docker.io/bitnami/rabbitmq:3.8
+    container_name: rabbitmq
+    ports:
+      - '4369:4369'
+      - '5672:5672'
+      - '25672:25672'
+      - '15672:15672'
+    environment:
+      - RABBITMQ_SECURE_PASSWORD=yes
+    volumes:
+      - 'rabbitmq:/bitnami'
+    networks:
+    - onion
+    restart: always
+
+  api:
+   container_name: "api"
+   build: src/main
+   environment:
+   - ASPNETCORE_ENVIRONMENT=Development
+   restart: always
+   ports:
+   - "5001:80"
+
+
+volumes:
+  mssql:
+  redis:
+  rabbitmq:
+    driver: local
+  elastic:
+    driver: local
+
+networks:
+  onion:
+    driver: bridge
