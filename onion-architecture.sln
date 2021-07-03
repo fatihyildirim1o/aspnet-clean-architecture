@@ -8,9 +8,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "services", "services", "{554B43C9-4BAA-4AD7-924D-F97B88F62579}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "main", "main", "{4254608A-D425-4467-860B-B3760194DF79}"
-	ProjectSection(SolutionItems) = preProject
-		src\main\Dockerfile = src\main\Dockerfile
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "src\main\Infrastructure\Infrastructure.csproj", "{51DF0212-43C2-441C-8AE2-D4E5040A551E}"
 EndProject
@@ -20,10 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "src\main\App
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Presentation", "src\main\Presentation\Presentation.csproj", "{F98242B2-A37C-4FFD-8427-172122289A2D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{572BD12C-9E47-446F-84CF-5395625F7E01}"
-	ProjectSection(SolutionItems) = preProject
-		docker-compose.yml = docker-compose.yml
-	EndProjectSection
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{08C2CCF4-7D9A-47A1-BD52-ACF481F5CEF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +41,10 @@ Global
 		{F98242B2-A37C-4FFD-8427-172122289A2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F98242B2-A37C-4FFD-8427-172122289A2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F98242B2-A37C-4FFD-8427-172122289A2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08C2CCF4-7D9A-47A1-BD52-ACF481F5CEF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08C2CCF4-7D9A-47A1-BD52-ACF481F5CEF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08C2CCF4-7D9A-47A1-BD52-ACF481F5CEF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08C2CCF4-7D9A-47A1-BD52-ACF481F5CEF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

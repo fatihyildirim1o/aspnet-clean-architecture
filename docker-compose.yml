@@ -111,15 +111,23 @@ services:
     - onion
     restart: always
 
-  api:
-   container_name: "api"
-   build: src/main
-   environment:
-   - ASPNETCORE_ENVIRONMENT=Development
-   restart: always
-   ports:
-   - "5001:80"
-
+  presentation:
+    container_name: api
+    image: ${DOCKER_REGISTRY-}presentation
+    networks:
+    - onion
+    build:
+      context: .
+      dockerfile: src/main/Presentation/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
 volumes:
   mssql:
