@@ -19,6 +19,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Presentation", "src\main\Pr
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{08C2CCF4-7D9A-47A1-BD52-ACF481F5CEF9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{20C691B7-490D-4EA6-B7B7-6E0FD6C93B59}"
+	ProjectSection(SolutionItems) = preProject
+		docs\initial-1.png = docs\initial-1.png
+		docs\initial-2.png = docs\initial-2.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
