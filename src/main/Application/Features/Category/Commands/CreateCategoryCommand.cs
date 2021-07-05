@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Application.Common.Contracts.Repositories;
 using Microsoft.AspNetCore.Http;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Category.Commands
 {
@@ -14,9 +15,12 @@ namespace Application.Features.Category.Commands
         public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, IDataResult<int>>
         {
             private readonly ICategoryRepository _categoryRepository;
-            public CreateCategoryCommandHandler(ICategoryRepository categoryRepository)
+            private readonly ILogger<CreateCategoryCommand> _logger;
+
+            public CreateCategoryCommandHandler(ICategoryRepository categoryRepository, ILogger<CreateCategoryCommand> logger)
             {
                 _categoryRepository = categoryRepository;
+                _logger = logger;
             }
 
             public async Task<IDataResult<int>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
@@ -25,6 +29,9 @@ namespace Application.Features.Category.Commands
                 {
                     Name = request.Name
                 });
+
+                _logger.LogInformation($"Added {request.Name} category.");
+
                 return new SuccessDataResult<int>(addedCategory.Id, "Category added.", StatusCodes.Status201Created);
             }
         }

@@ -1,18 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Net.NetworkInformation;
-using System.Reflection;
 using Application.Common.Contracts.Repositories;
 using Application.Features.Category.Mapping;
 using Application.Features.Product.Mapping;
 using AutoMapper;
-using Elastic.Apm.AspNetCore;
-using Elastic.Apm.DiagnosticSource;
-using Elastic.Apm.EntityFrameworkCore;
 using Infrastructure.ObjectRelationMapping.EntityFramework.Config;
 using Infrastructure.ObjectRelationMapping.EntityFramework.Repositories;
 using MediatR;
-using MediatR.Pipeline;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +15,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System;
+using System.Collections.Generic;
+using Serilog;
 
 namespace Presentation
 {
@@ -48,9 +43,11 @@ namespace Presentation
                 });
             });
             var mapper = mappingConfig.CreateMapper();
+
             services.AddSingleton(mapper);
 
             services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
@@ -69,6 +66,7 @@ namespace Presentation
             });
 
             services.AddHealthChecks();
+
             services.AddResponseCompression();
 
             services.AddDbContext<EfApplicationContext>(
@@ -105,7 +103,6 @@ namespace Presentation
             {
                 endpoints.MapControllers();
             });
-
   
             app.UseHealthChecks("/status");
 
