@@ -15,15 +15,16 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Presentation.Middleware;
 using System;
 using System.Collections.Generic;
-using Serilog;
 
 namespace Presentation
 {
     public class Startup
     {
         public IConfiguration Configuration { get; }
+
 
         public Startup(IConfiguration configuration)
         {
@@ -93,6 +94,8 @@ namespace Presentation
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Onion Architecture"));
             }
 
+            app.UseMiddleware<ExceptionMiddleware>();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -103,12 +106,15 @@ namespace Presentation
             {
                 endpoints.MapControllers();
             });
-  
+
             app.UseHealthChecks("/status");
 
             app.UseApiVersioning();
 
             app.UseResponseCompression();
+
+
+
         }
     }
 }
